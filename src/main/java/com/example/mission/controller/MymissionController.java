@@ -44,6 +44,14 @@ public class MymissionController {
         return MymissionService.addMissionWithCompetence(mymission);
     }
 
+    @PutMapping("addWtUser/{id}/{name}")
+    public Mymission AssignUserToMission(@PathVariable("id") Long idMission,@RequestBody String nameU){
+        return MymissionService.AssignUserToMission(idMission,nameU);
+    }
+    @GetMapping("getCapacity/{id}")
+    public boolean verifMissionCapacity(@PathVariable("id") Long idMission){
+        return MymissionService.verifMissionCapacity(idMission);
+    }
     
 
 }

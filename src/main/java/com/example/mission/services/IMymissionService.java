@@ -15,4 +15,6 @@ public interface IMymissionService {
     Mymission addMissionWithCompetence(Mymission mymission);
 
     Mymission AssignUserToMission(Long idMission,String nameU);
+
+    boolean verifMissionCapacity(Long idMission);
 }

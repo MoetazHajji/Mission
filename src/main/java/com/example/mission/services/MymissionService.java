@@ -65,17 +65,30 @@ public class MymissionService implements IMymissionService {
     @Transactional
     public Mymission AssignUserToMission(Long idMission, String nameU) {
         Mymission mymission = MymissionRepository.findById(idMission).orElse(null);
+        User user=userRepository.findUserByName(nameU);
         Long nbPlacesMission = MymissionRepository.getNbUsers(idMission);
-        mymission.setUsers(null);
-        for (User user:mymission.getUsers()){
-            if(mymission.getNbPlaces() > nbPlacesMission) {
-                user.setMission(mymission);
-                userRepository.save(user);
-            }else if (mymission.getNbPlaces() == nbPlacesMission){
-                throw new OutOfNumberException("This Mission is full");
-            }
+        Set<User> UserList = new HashSet<>();
+        if(mymission.getNbPlaces() > nbPlacesMission) {
+            UserList.add(user);
+            user.setMission(mymission);
+            userRepository.save(user);
+            mymission.setUsers(UserList);
+            MymissionRepository.save(mymission);
+        }else if (mymission.getNbPlaces() == nbPlacesMission){
+            throw new OutOfNumberException("This Mission is full");
         }
-        MymissionRepository.save(mymission);
         return mymission;
+    }
+
+    @Override
+    public boolean verifMissionCapacity(Long idMission) {
+        Mymission mymission = MymissionRepository.findById(idMission).orElse(null);
+        Long nbPlacesMission = MymissionRepository.getNbUsers(idMission);
+        if (mymission.getNbPlaces() > nbPlacesMission){
+            return true;
+        }else if (mymission.getNbPlaces() == nbPlacesMission){
+            return false;
+        }else
+            return false;
     }
 }
