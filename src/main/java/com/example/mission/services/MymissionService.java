@@ -1,5 +1,6 @@
 package com.example.mission.services;
 
+import com.example.mission.Exception.OutOfNumberException;
 import com.example.mission.entities.Competence;
 import com.example.mission.entities.Mymission;
 import com.example.mission.entities.User;
@@ -64,12 +65,17 @@ public class MymissionService implements IMymissionService {
     @Transactional
     public Mymission AssignUserToMission(Long idMission, String nameU) {
         Mymission mymission = MymissionRepository.findById(idMission).orElse(null);
-        Set<User> users = new HashSet<>();
-            User user = userRepository.findUserByName(nameU);
-            users.add(user);
-            mymission.setUsers(users);
+        Long nbPlacesMission = MymissionRepository.getNbUsers(idMission);
+        mymission.setUsers(null);
+        for (User user:mymission.getUsers()){
+            if(mymission.getNbPlaces() > nbPlacesMission) {
+                user.setMission(mymission);
+                userRepository.save(user);
+            }else if (mymission.getNbPlaces() == nbPlacesMission){
+                throw new OutOfNumberException("This Mission is full");
+            }
+        }
         MymissionRepository.save(mymission);
-
-        return null;
+        return mymission;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.mission.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class User {
     Long id;
     String name;
 
+    @JsonIgnore
     @ManyToOne
     Mymission mission;
 }
