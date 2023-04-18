@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -17,6 +19,6 @@ public class User {
     String name;
 
     @JsonIgnore
-    @ManyToOne
-    Mymission mission;
+    @ManyToMany
+    Set<Mymission> missions;
 }

@@ -28,10 +28,10 @@ public class Mymission {
     LocalDate dateFin;
     Long nbPlaces;
 
-    @OneToMany(mappedBy = "mission",cascade = CascadeType.ALL)
-    private Set<Competence> Competences;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Competence> competences;
 
-    @OneToMany(mappedBy = "mission",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "missions",cascade = CascadeType.ALL)
     private Set<User> users;
 
 }

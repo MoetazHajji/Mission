@@ -4,6 +4,7 @@ import com.example.mission.Exception.OutOfNumberException;
 import com.example.mission.entities.Competence;
 import com.example.mission.entities.Mymission;
 import com.example.mission.entities.User;
+import com.example.mission.repositories.CompetenceRepository;
 import com.example.mission.repositories.MymissionRepository;
 import com.example.mission.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,13 @@ public class MymissionService implements IMymissionService {
     MymissionRepository MymissionRepository;
 
     UserRepository userRepository;
+    private final CompetenceRepository competenceRepository;
 
-    public MymissionService(MymissionRepository MymissionRepository , UserRepository userRepository) {
+    public MymissionService(MymissionRepository MymissionRepository , UserRepository userRepository,
+                            CompetenceRepository competenceRepository) {
         this.MymissionRepository = MymissionRepository;
         this.userRepository = userRepository;
+        this.competenceRepository = competenceRepository;
     }
 
     @Override
@@ -50,14 +54,16 @@ public class MymissionService implements IMymissionService {
     }
 
     @Override
-    public Mymission addMissionWithCompetence(Mymission mymission) {
-        MymissionRepository.save(mymission);
-        Set<Competence> competences =mymission.getCompetences();
-        mymission.setCompetences(null);
-        for (Competence competence:competences){
-            competence.setMission(mymission);
-            MymissionRepository.save(mymission);
+    public Mymission addMissionWithCompetence(Long idMission,Set<Long> idCompts ) {
+        Mymission mymission = MymissionRepository.findById(idMission).orElse(null);
+        Set<Competence> competenceList = new HashSet<>();
+        for (Long idCompetence:idCompts){
+            Competence competence=competenceRepository.findById(idCompetence).orElse(null);
+            competenceList.add(competence);
+            mymission.setCompetences(competenceList);
+            competenceRepository.save(competence);
         }
+        MymissionRepository.save(mymission);
         return mymission;
     }
 
@@ -65,7 +71,7 @@ public class MymissionService implements IMymissionService {
     @Transactional
     public Mymission AssignUserToMission(Long idMission, String nameU) {
         Mymission mymission = MymissionRepository.findById(idMission).orElse(null);
-        User user=userRepository.findUserByName(nameU);
+       /* User user=userRepository.findUserByName(nameU);
         Long nbPlacesMission = MymissionRepository.getNbUsers(idMission);
         Set<User> UserList = new HashSet<>();
         if(mymission.getNbPlaces() > nbPlacesMission) {
@@ -76,7 +82,7 @@ public class MymissionService implements IMymissionService {
             MymissionRepository.save(mymission);
         }else if (mymission.getNbPlaces() == nbPlacesMission){
             throw new OutOfNumberException("This Mission is full");
-        }
+        }*/
         return mymission;
     }
 
@@ -90,5 +96,11 @@ public class MymissionService implements IMymissionService {
             return false;
         }else
             return false;
+    }
+
+    @Override
+    public Set<Competence> getCompetencesForMission(Long missionId) {
+        Mymission mission = MymissionRepository.findById(missionId).orElse(null);
+        return mission.getCompetences();
     }
 }

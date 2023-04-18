@@ -6,6 +6,8 @@ import com.example.mission.entities.Mymission;
 import com.example.mission.services.IMymissionService;
 
 import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("Mymission")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -39,13 +41,13 @@ public class MymissionController {
         MymissionService.supprimerMymission(id);
     }
 
-    @PostMapping("/addWC")
-    public Mymission addMissionWithCompetence(@RequestBody Mymission mymission){
-        return MymissionService.addMissionWithCompetence(mymission);
+    @PutMapping("/addWC/{idM}")
+    public Mymission addMissionWithCompetence(@PathVariable("idM") Long idMission , @RequestBody Set<Long> idCpmts){
+        return MymissionService.addMissionWithCompetence(idMission,idCpmts);
     }
 
     @PutMapping("addWtUser/{id}/{name}")
-    public Mymission AssignUserToMission(@PathVariable("id") Long idMission,@RequestBody String nameU){
+    public Mymission AssignUserToMission(@PathVariable("id") Long idMission,@PathVariable("name") String nameU){
         return MymissionService.AssignUserToMission(idMission,nameU);
     }
     @GetMapping("getCapacity/{id}")

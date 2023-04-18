@@ -25,8 +25,8 @@ public class Competence {
     String cname ;
 
     @JsonIgnore
-    @ManyToOne
-    private Mymission mission;
+    @ManyToMany(mappedBy = "competences")
+    private Set<Mymission> missions;
 
 }
 
